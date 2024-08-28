@@ -142,7 +142,7 @@ async def main():
 
         for i,result in enumerate(results):
             print("______________")
-            print(f"Servo {i+1}: {result}")
+            print(f"{result}")
             print("______________")
             
 

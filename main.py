@@ -140,7 +140,7 @@ async def main():
         #     f"{result.values[moteus.Register.VELOCITY]})"
         #     for result in results))
 
-        for i,result in enumerate(result):
+        for i,result in enumerate(results):
             print("______________")
             print(f"Servo {i+1}: arb: {result.arbitration_id} Position: {result.values[moteus.Register.POSITION]} Velocity: {result.values[moteus.Register.VELOCITY]}")
             print("______________")

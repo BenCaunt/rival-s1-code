@@ -32,7 +32,7 @@ async def main():
     # describes which IDs are found on which bus.
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map = {
-            1:[1,2,3,4,5,6,7,8],
+            1:[1,2],
             # 2:[5,6,7,8],
         },
     )
@@ -45,7 +45,7 @@ async def main():
     # https://docs.python.org/3/tutorial/datastructures.html#dictionaries
     servos = {
         servo_id : moteus.Controller(id=servo_id, transport=transport)
-        for servo_id in [1, 2, 3, 4, 5, 6, 7, 8]
+        for servo_id in [1, 2]
     }
 
     # We will start by sending a 'stop' to all servos, in the event
@@ -76,30 +76,6 @@ async def main():
             servos[2].make_position(
                 position=math.nan,
                 velocity=0.1*math.sin(now + 1),
-                query=True),
-            servos[3].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 2),
-                query=True),
-            servos[4].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 3),
-                query=True),
-            servos[5].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 4),
-                query=True),
-            servos[6].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 5),
-                query=True),
-            servos[7].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 6),
-                query=True),
-            servos[8].make_position(
-                position=math.nan,
-                velocity=0.1*math.sin(now + 7),
                 query=True),
         ]
 

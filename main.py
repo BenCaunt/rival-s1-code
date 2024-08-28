@@ -14,45 +14,78 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Demonstrates using the IMU API of the pi3hat.'''
+'''Demonstrates using the RAW CAN API of the pi3hat.'''
 
 import asyncio
 import moteus
 import moteus_pi3hat
+import time
 
 
 async def main():
-    transport = moteus_pi3hat.Pi3HatRouter()
+    # The parameters of each CAN bus can be set at construction time.
+    # The available fields can be found in the C++ header at
+    # Pi3Hat::CanConfiguration
+    slow_can = moteus_pi3hat.CanConfiguration()
+    slow_can.slow_bitrate = 125000
+    slow_can.fdcan_frame = False
+    slow_can.bitrate_switch = False
+
+    # If buses are not listed, then they default to the parameters
+    # necessary to communicate with a moteus controller.
+    can_config = {
+        5: slow_can,
+    }
+    transport = moteus_pi3hat.Pi3HatRouter(can=can_config)
+
+    # Since we didn't specify a 'servo_bus_map' to Pi3HatRouter, this
+    # will be assumed to be on bus 1.
+    controller = moteus.Controller(id = 1, transport=transport)
 
     while True:
-        # When request_attitude=True, the attitude is returned as a
-        # response from a "special" servo with ID -1 and the type
-        # moteus_pi3hat.CanAttitudeWrapper.
-        result = await transport.cycle([], request_attitude=True)
-        imu_result = [
-            x for x in result
-            if x.id == -1 and isinstance(x, moteus_pi3hat.CanAttitudeWrapper)][0]
+        # To send a raw CAN, you must manually instantiate a
+        # 'moteus.Command' and fill in its fields, along with which
+        # bus to send it on.
+        raw_message = moteus.Command()
+        raw_message.raw = True
+        raw_message.arbitration_id = 0x0405
+        raw_message.bus = 5
+        raw_message.data = b'1234'
+        raw_message.reply_required = False
 
-        # It has fields for the attitude quaternion, the angular rate
-        # in dps, and the acceleration in mps2.  Additionally, for
-        # convenience, the quaternion is converted into euler angles
-        # following the quad A1 convention.
+        # A single 'transport.cycle' call's message list can contain a
+        # mix of "raw" frames and those generated from
+        # 'moteus.Controller'.
+        #
+        # If you want to listen on a CAN bus without having sent a
+        # command with 'reply_required' set, you can use the
+        # 'force_can_check' optional parameter.  It is a 1-indexed
+        # bitfield listing which additional CAN buses should be
+        # listened to.
 
-        att = imu_result.attitude
-        print(f"attitude={att.w:.4f},{att.x:.4f},{att.y:.4f},{att.z:.4f}")
+        results = await transport.cycle([
+            raw_message,
+            controller.make_query(),
+        ], force_can_check = (1 << 5))
 
-        rate_dps = imu_result.rate_dps
-        print(f"rate_dps={rate_dps.x:.3f},{rate_dps.y:.3f},{rate_dps.z:.3f}")
+        # If any raw CAN frames are present, the result list will be a
+        # mix of moteus.Result elements and can.Message elements.
+        # They each have the 'bus', 'arbitration_id', and 'data'
+        # fields.
+        #
+        # moteus.Result elements additionally have an 'id' field which
+        # is the moteus servo ID and a 'values' field which reports
+        # the decoded response.
+        for result in results:
+            if hasattr(result, 'id'):
+                # This is a moteus structure.
+                print(f"{time.time():.3f} MOTEUS {result}")
+            else:
+                # This is a raw structure.
+                print(f"{time.time():.3f} BUS {result.bus}  " +
+                      f"ID {result.arbitration_id:x}  DATA {result.data.hex()}")
 
-        accel_mps2 = imu_result.accel_mps2
-        print(f"accel_mps2={accel_mps2.x:.3f},{accel_mps2.y:.3f},{accel_mps2.z:.3f}")
-
-        euler_rad = imu_result.euler_rad
-        print(f"euler_rad= r={euler_rad.roll:.3f},p={euler_rad.pitch:.3f},y={euler_rad.yaw:.3f}")
-
-        print()
-
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1.0)
 
 
 if __name__ == '__main__':

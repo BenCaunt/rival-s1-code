@@ -32,8 +32,9 @@ async def main():
     # describes which IDs are found on which bus.
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map = {
-            1:[1,2,3,4],
-            # 2:[5,6,7,8],
+            1:[1,2,3],
+            2:[4,5,6],
+            3:[7,8]
         },
     )
 
@@ -45,7 +46,7 @@ async def main():
     # https://docs.python.org/3/tutorial/datastructures.html#dictionaries
     servos = {
         servo_id : moteus.Controller(id=servo_id, transport=transport)
-        for servo_id in [1, 2, 3, 4]
+        for servo_id in [1, 2, 3, 4, 5, 6,7,8]
     }
 
     # We will start by sending a 'stop' to all servos, in the event
@@ -68,23 +69,41 @@ async def main():
         # 'make_position' accepts optional keyword arguments that
         # correspond to each of the available position mode registers
         # in the moteus reference manual.
+
+        gain = 0.1 
         commands = [
             servos[1].make_position(
                 position=math.nan,
-                velocity=0.1*math.sin(now),
+                velocity=gain*math.sin(now),
                 query=True),
             servos[2].make_position(
                 position=math.nan,
-                velocity=0.1*math.sin(now + 1),
+                velocity=gain*math.sin(now + 1),
                 query=True),
             servos[3].make_position(
                 position=math.nan,
-                velocity=0.1*math.sin(now),
+                velocity=gain*math.sin(now),
                 query=True),
             servos[4].make_position(
                 position=math.nan,
-                velocity=0.1*math.sin(now + 1),
+                velocity=gain*math.sin(now),
                 query=True),
+            servos[5].make_position(
+                position=math.nan,
+                velocity=gain*math.sin(now + 1),
+                query=True),
+            servos[6].make_position(
+                position=math.nan,
+                velocity=gain*math.sin(now),
+                query=True),       
+            servos[7].make_position(
+                position=math.nan,
+                velocity=gain*math.sin(now),
+                query=True),
+            servos[8].make_position(
+                position=math.nan,
+                velocity=gain*math.sin(now + 1),
+                query=True),         
         ]
 
         # By sending all commands to the transport in one go, the

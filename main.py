@@ -142,7 +142,7 @@ async def main():
 
         for i,result in enumerate(results):
             print("______________")
-            print(f"Servo {i+1}: arb: {result.arbitration_id} Position: {result.values[moteus.Register.POSITION]} Velocity: {result.values[moteus.Register.VELOCITY]}")
+            print(f"Servo {i+1}: arb: {result}")
             print("______________")
             
 

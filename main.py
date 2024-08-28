@@ -22,9 +22,22 @@ bandwidth.
 
 import asyncio
 import math
-import moteus
-import moteus_pi3hat
+import moteus # type: ignore
+import moteus_pi3hat # type: ignore
 import time
+
+
+def angle_wrap(angle):
+    while angle > math.pi:
+        angle -= 2 * math.pi
+    while angle < -math.pi:
+        angle += 2 * math.pi
+    return angle
+
+AZIMUTH_RATIO = 12.0 / 83.0
+
+def azimuth_angle_to_rotation(azimuth_angle: float) -> float:
+    return azimuth_angle * AZIMUTH_RATIO
 
 async def main():
     # We will be assuming a system where there are 4 servos, each
@@ -121,16 +134,23 @@ async def main():
         #
         # Here, we'll just print the ID, position, and velocity of
         # each servo for which a reply was returned.
-        print(", ".join(
-            f"({result.arbitration_id} " +
-            f"{result.values[moteus.Register.POSITION]} " +
-            f"{result.values[moteus.Register.VELOCITY]})"
-            for result in results))
+        # print(", ".join(
+        #     f"({result.arbitration_id} " +
+        #     f"{result.values[moteus.Register.POSITION]} " +
+        #     f"{result.values[moteus.Register.VELOCITY]})"
+        #     for result in results))
+
+        for i,result in enumerate(result):
+            print("______________")
+            print(f"Servo {i+1}: arb: {result.arbitration_id} Position: {result.values[moteus.Register.POSITION]} Velocity: {result.values[moteus.Register.VELOCITY]}")
+            print("______________")
+            
 
         # We will wait 20ms between cycles.  By default, each servo
         # has a watchdog timeout, where if no CAN command is received
         # for 100ms the controller will enter a latched fault state.
         await asyncio.sleep(0.02)
+
 
 
 if __name__ == '__main__':

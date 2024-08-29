@@ -178,14 +178,17 @@ async def main():
 
     
         for id in azimuth_ids:
-            pos = measured_module_positions[id]
+            try:
+                pos = measured_module_positions[id]
 
-            commands = [
-                servos[id].make_position(
-                    position=pos + calculate_target_position_delta(reference_angle, calculate_swerve_angle(pos)),
-                    velocity=0.0,
-                    query=True)
-            ]
+                commands = [
+                    servos[id].make_position(
+                        position=pos + calculate_target_position_delta(reference_angle, calculate_swerve_angle(pos)),
+                        velocity=0.0,
+                        query=True)
+                ]
+            except KeyError:
+                print(f"Could not find position for {id}")
 
 
         # By sending all commands to the transport in one go, the

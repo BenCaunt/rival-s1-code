@@ -106,8 +106,6 @@ async def main():
             results = await transport.cycle([servos[id].make_position(position=math.nan, velocity=0.0, query=True)])
             for result in results:
                 if result.id == id:
-                    print(type(result.values[moteus.Register.POSITION]))
-                    assert result.values[moteus.Register.POSITION] is float
                     position_offsets[id] += result.values[moteus.Register.POSITION]
                     break
         position_offsets[id] /= 10

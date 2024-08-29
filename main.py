@@ -174,6 +174,10 @@ async def main():
                     measured_module_positions[id] = result.values[moteus.Register.POSITION] - position_offsets[id]
                     print(f"Measured position for {id}: {measured_module_positions[id]}, {calculate_swerve_angle(measured_module_positions[id])}")
                     break
+
+        print(f"Measured module positions: {measured_module_positions}")
+        print(f"len measured module positions: {len(measured_module_positions)}")
+        print(f"len azimuth ids: {len(azimuth_ids)}")
         assert len(measured_module_positions) == len(azimuth_ids)
 
     

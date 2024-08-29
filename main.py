@@ -111,58 +111,12 @@ async def main():
         position_offsets[id] /= 10
 
     while True:
-        # The 'cycle' method accepts a list of commands, each of which
-        # is created by calling one of the `make_foo` methods on
-        # Controller.  The most common thing will be the
-        # `make_position` method.
-
         now = time.time()
 
-        # For now, we will just construct a position command for each
-        # of the 4 servos, each of which consists of a sinusoidal
-        # velocity command starting from wherever the servo was at to
-        # begin with.
-        #
-        # 'make_position' accepts optional keyword arguments that
-        # correspond to each of the available position mode registers
-        # in the moteus reference manual.
+
 
         gain = 0.1 
-        # commands = [
-        #     servos[1].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now),
-        #         query=True),
-        #     servos[2].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now + 1),
-        #         query=True),
-        #     servos[3].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now),
-        #         query=True),
-        #     servos[4].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now),
-        #         query=True),
-        #     servos[5].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now + 1),
-        #         query=True),
-        #     servos[6].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now),
-        #         query=True),       
-        #     servos[7].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now),
-        #         query=True),
-        #     servos[8].make_position(
-        #         position=math.nan,
-        #         velocity=gain*math.sin(now + 1),
-        #         query=True),         
-        # ]
-
+ 
         reference_angle = math.pi/2 # 90 degrees
 
 
@@ -175,8 +129,6 @@ async def main():
                     print(f"Measured position for {id}: {measured_module_positions[id]}, {calculate_swerve_angle(measured_module_positions[id])}")
                     break
 
-
-    
         for id in azimuth_ids:
             try:
                 pos = measured_module_positions[id]
@@ -221,7 +173,7 @@ async def main():
         # We will wait 20ms between cycles.  By default, each servo
         # has a watchdog timeout, where if no CAN command is received
         # for 100ms the controller will enter a latched fault state.
-        await asyncio.sleep(0.02)
+        await asyncio.sleep(0.04)
 
 
 

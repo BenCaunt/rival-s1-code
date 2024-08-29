@@ -175,10 +175,6 @@ async def main():
                     print(f"Measured position for {id}: {measured_module_positions[id]}, {calculate_swerve_angle(measured_module_positions[id])}")
                     break
 
-        print(f"Measured module positions: {measured_module_positions}")
-        print(f"len measured module positions: {len(measured_module_positions)}")
-        print(f"len azimuth ids: {len(azimuth_ids)}")
-        assert len(measured_module_positions) == len(azimuth_ids)
 
     
         for id in azimuth_ids:
@@ -191,7 +187,6 @@ async def main():
                     query=True)
             ]
 
-        assert len(commands) == len(azimuth_ids)
 
         # By sending all commands to the transport in one go, the
         # pi3hat can send out commands and retrieve responses
@@ -214,10 +209,10 @@ async def main():
         #     f"{result.values[moteus.Register.VELOCITY]})"
         #     for result in results))
 
-        for i,result in enumerate(results):
-            print("______________")
-            print(f"{result.id}")
-            print("______________")
+        # for i,result in enumerate(results):
+        #     print("______________")
+        #     print(f"{result.id}")
+        #     print("______________")
             
 
         # We will wait 20ms between cycles.  By default, each servo

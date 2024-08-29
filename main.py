@@ -132,10 +132,14 @@ async def main():
         for id in azimuth_ids:
             try:
                 pos = measured_module_positions[id]
-
+                delta = calculate_target_position_delta(reference_angle, calculate_swerve_angle(pos))
+                reference = pos + delta
+                print(f"Reference position for {id}: {reference}")
+                print(f"Delta for {id}: {delta}")
+                
                 commands = [
                     servos[id].make_position(
-                        position=pos + calculate_target_position_delta(reference_angle, calculate_swerve_angle(pos)),
+                        position=reference,
                         velocity=0.0,
                         query=True)
                 ]

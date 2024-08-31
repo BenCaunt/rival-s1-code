@@ -79,8 +79,8 @@ async def main():
             commands = []
             for id in azimuth_ids:
 
-                current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(
-                    initial_module_positions[id]
+                current_angle = np.pi - (
+                    calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id])
                 )
                 current_angle = angle_wrap(current_angle)
                 target_angle = np.pi / 2.0  # module_angles.from_id(id)

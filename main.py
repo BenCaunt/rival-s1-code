@@ -71,7 +71,13 @@ async def main():
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
 
     try:
+        loop_start = time.monotonic()
+        dt = 0.005
         while True:
+            dt = time.monotonic() - loop_start
+            loop_start = time.monotonic()
+            
+
 
             reference = Twist2dVelocity(1.0, 0.0, 0.0)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference)

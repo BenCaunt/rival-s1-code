@@ -79,7 +79,7 @@ async def main():
                 commands.append(servos[id].make_position(
                     position=target_position_delta,
                     velocity=0.0,
-                    maximum_torque=0.1,
+                    maximum_torque=0.3,
                     query=True
                 ))
 

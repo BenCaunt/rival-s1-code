@@ -49,27 +49,19 @@ async def main():
     reference_angle = math.pi / 2  # 90 degrees
     gain = 0.1
 
+    measured_module_positions = {
+        2: 0.0,
+        4: 0.0,
+        6: 0.0,
+        8: 0.0
+    }
+
     try:
         while True:
+        
             commands = []
             for id in azimuth_ids:
-                commands.append(servos[id].make_position(position=math.nan, velocity=0.0, query=True))
 
-            results = await transport.cycle(commands)
-
-            measured_module_positions = {
-                result.id: result.values[moteus.Register.POSITION]
-                for result in results if result.id in azimuth_ids
-            }
-
-            commands = []
-            for id in azimuth_ids:
-                pos = measured_module_positions[id]
-                current_angle = calculate_swerve_angle(pos)
-                delta = calculate_target_position_delta(reference_angle, current_angle)
-                reference = pos + gain * delta
-
-                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
 
                 commands.append(servos[id].make_position(
                     position=math.nan,
@@ -77,9 +69,18 @@ async def main():
                     maximum_torque=0.1,
                     query=True
                 ))
+                current_angle = calculate_swerve_angle(measured_module_positions[id])
+                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
+
+                
             print("")
 
-            await transport.cycle(commands)
+            results = await transport.cycle(commands)
+
+            measured_module_positions = {
+                result.id: result.values[moteus.Register.POSITION]
+                for result in results if result.id in azimuth_ids
+            }
             await asyncio.sleep(0.02)
 
     except KeyboardInterrupt:

@@ -84,8 +84,7 @@ async def main():
                 ))
 
 
-                if id == 2:
-                    print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}° rotation delta target: {target_position_delta}, --into deg--> {math.degrees(calculate_swerve_angle(target_position_delta))}°", end = " ")
+                print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
 
                 
             print("")

@@ -76,8 +76,8 @@ async def main():
                     position=measured_module_positions[id] + target_position_delta,
                     velocity=0.0,
                     maximum_torque=0.5,
-                    velocity_limit=1.0,
-                    accel_limit=5.0,
+                    velocity_limit=10.0,
+                    accel_limit=20.0,
                     query=True
                 ))
 

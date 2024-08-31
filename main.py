@@ -79,7 +79,7 @@ async def main():
                 commands.append(servos[id].make_position(
                     position=target_position_delta,
                     velocity=math.nan,
-                    maximum_torque=1.0,
+                    maximum_torque=0.5,
                     query=True
                 ))
 
@@ -96,7 +96,7 @@ async def main():
                 result.id: result.values[moteus.Register.POSITION]
                 for result in results if result.id in azimuth_ids
             }
-            # await asyncio.sleep(0.01)
+            await asyncio.sleep(0.005)
 
     except KeyboardInterrupt:
         print("\nStopping all servos...")

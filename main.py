@@ -10,7 +10,12 @@ from tqdm import tqdm
 AZIMUTH_RATIO = 12.0 / 83.0
 
 def angle_wrap(angle):
-    return (angle + math.pi) % (2 * math.pi) - math.pi
+    while angle > math.pi:
+        angle -= 2 * math.pi
+    while angle < -math.pi:
+        angle += 2 * math.pi
+    return angle
+
 
 def calculate_swerve_angle(position: float) -> float:
     return angle_wrap(position * 2 * math.pi * AZIMUTH_RATIO)
@@ -66,6 +71,10 @@ async def main():
             commands = []
             for id in azimuth_ids:
 
+                current_angle = calculate_swerve_angle(measured_module_positions[id] - initial_module_positions[id])
+                target_angle = reference_angle
+                error = angle_wrap(target_angle - current_angle)
+                target_position_delta = calculate_target_position_delta(reference_angle, current_angle)
 
                 commands.append(servos[id].make_position(
                     position=math.nan,
@@ -73,8 +82,8 @@ async def main():
                     maximum_torque=0.1,
                     query=True
                 ))
-                current_angle = calculate_swerve_angle(measured_module_positions[id] - initial_module_positions[id])
-                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
+                
+                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f} {target_position_delta}°,", end = " ")
 
                 
             print("")

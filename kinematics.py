@@ -1,6 +1,6 @@
 import math
 from typing import List, Tuple
-from geometry2d import Twist2d, Twist2dVelocity, Vector2d
+from geometry2d import Transform2d, Twist2d, Twist2dVelocity, Vector2d
 import numpy as np
 from dataclasses import dataclass
 
@@ -59,7 +59,12 @@ class ModuleAngles:
     def to_list_degrees(self) -> List[float]:
         return [math.degrees(angle) for angle in self.to_list()]
 
-def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAngles]:
+def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeeds, ModuleAngles]:
+
+    transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
+    twist = transform.log()
+    twist = Twist2dVelocity(twist.dx, twist.dy, twist.dyaw)
+
     twist = np.array([twist.vx, twist.vy, twist.w])
     assert twist.shape == (3,)
 
@@ -75,7 +80,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
             [0, 1, br_pos.x]
         ]
     )
-    speeds = np.dot(transition, twist)
+    speeds = np.dot(transition, twist.transpose())
 
     v1 = np.sqrt(speeds[0] ** 2 + speeds[1] ** 2)
     v2 = np.sqrt(speeds[2] ** 2 + speeds[3] ** 2)
@@ -91,9 +96,13 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
 
 
 if __name__ == "__main__":
-    twist = Twist2dVelocity(0.0, 0.0, 1.0)
-    speeds, angles = twist_to_wheel_speeds(twist)
+    twist = Twist2dVelocity(0.5, 0.0, 1.0)
+    speeds, angles = twist_to_wheel_speeds(twist, 0.05)
 
     print(angles.to_list_degrees())
+    print(speeds.front_left)
+    print(speeds.front_right)
+    print(speeds.back_left)
+    print(speeds.back_right)
 
 

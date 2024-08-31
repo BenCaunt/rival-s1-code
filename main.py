@@ -8,6 +8,11 @@ import time
 from tqdm import tqdm
 
 AZIMUTH_RATIO = 12.0 / 83.0
+DRIVE_REDUCTION = 17.0 / 54.0
+
+DRIVE_DIAMETER = 0.075 # 75 mm
+DRIVE_CIRCUMFERENCE = DRIVE_DIAMETER * math.pi
+
 
 def angle_wrap(angle):
     while angle > math.pi:
@@ -19,6 +24,12 @@ def angle_wrap(angle):
 
 def calculate_swerve_angle(position: float) -> float:
     return angle_wrap(position * 2 * math.pi * AZIMUTH_RATIO)
+
+def wheel_speed_to_motor_speed(wheel_speed: float) -> float:
+    return wheel_speed / (DRIVE_CIRCUMFERENCE * DRIVE_REDUCTION)
+    
+def motor_speed_to_wheel_speed(motor_speed: float) -> float:
+    return motor_speed * (DRIVE_CIRCUMFERENCE * DRIVE_REDUCTION)
 
 def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
     angle_difference = angle_wrap(reference_azimuth_angle - estimated_angle)
@@ -88,10 +99,12 @@ async def main():
                     print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
                     print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
 
+            reference_velocity = 0.25 # m/s 
+            reference_wheel_speed = wheel_speed_to_motor_speed(reference_velocity)
             for id in drive_ids:
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=1.0,
+                    velocity=reference_wheel_speed,
                     maximum_torque=1.5,
                     query=True)
                 )

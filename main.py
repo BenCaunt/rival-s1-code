@@ -2,6 +2,8 @@
 
 import asyncio
 import math
+
+import numpy as np
 import moteus
 import moteus_pi3hat
 import time
@@ -87,7 +89,7 @@ async def main():
 
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id])
                 current_angle = angle_wrap(current_angle)
-                target_angle = 0.0 # module_angles.from_id(id)
+                target_angle = np.pi / 2.0 # module_angles.from_id(id)
                 error = angle_wrap(target_angle - current_angle)
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 

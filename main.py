@@ -83,11 +83,11 @@ async def main():
         while True:
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
-            
+
 
 
             reference = Twist2dVelocity(1.0, 0.0, 0.0)
-            wheel_speeds, module_angles = twist_to_wheel_speeds(reference)
+            wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)
             print(module_angles.to_list_degrees())
 
         

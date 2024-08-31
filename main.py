@@ -39,14 +39,7 @@ async def main():
     # Stop all servos
     await transport.cycle([x.make_stop() for x in servos.values()])
 
-    # Calibrate position offsets
-    position_offsets = {}
-    for id in tqdm(azimuth_ids, desc="Calibrating"):
-        results = await transport.cycle([servos[id].make_position(position=math.nan, velocity=0.0, query=True)] * 10)
-        positions = [result.values[moteus.Register.POSITION] for result in results if result.id == id]
-        position_offsets[id] = sum(positions) / len(positions)
 
-    print("Calibration complete. Position offsets:", position_offsets)
 
     reference_angle = math.pi / 2  # 90 degrees
     gain = 0.1
@@ -60,7 +53,7 @@ async def main():
             results = await transport.cycle(commands)
 
             measured_module_positions = {
-                result.id: result.values[moteus.Register.POSITION] - position_offsets[result.id]
+                result.id: result.values[moteus.Register.POSITION]
                 for result in results if result.id in azimuth_ids
             }
 

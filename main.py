@@ -65,7 +65,6 @@ async def main():
     initial_module_positions = {
         result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids
     }
-    print(initial_module_positions)
 
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
 
@@ -82,7 +81,7 @@ async def main():
                     initial_module_positions[id]
                 )
                 current_angle = angle_wrap(current_angle)
-                target_angle = module_angles.from_id(id)
+                target_angle = 0.0  # module_angles.from_id(id)
                 error = angle_wrap(target_angle - current_angle)
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 

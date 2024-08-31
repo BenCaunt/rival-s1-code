@@ -84,8 +84,4 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
 
 
 
-if __name__ == "__main__":
-    print(twist_to_wheel_speeds(Twist2dVelocity(1, 1, 1)))
-
-
 

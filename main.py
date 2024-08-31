@@ -12,7 +12,8 @@ DRIVE_REDUCTION = 17.0 / 54.0
 
 DRIVE_DIAMETER = 0.075 # 75 mm
 DRIVE_CIRCUMFERENCE = DRIVE_DIAMETER * math.pi
-
+from kinematics import twist_to_wheel_speeds, WheelSpeeds, ModuleAngles
+from geometry2d import Twist2dVelocity
 
 def angle_wrap(angle):
     while angle > math.pi:
@@ -68,9 +69,6 @@ async def main():
     }
     print(initial_module_positions)
 
-    reference_angle = math.radians(90.0 )
-    gain = 0.1
-
     measured_module_positions = {
         2: 0.0,
         4: 0.0,
@@ -80,15 +78,19 @@ async def main():
 
     try:
         while True:
+
+            reference = Twist2dVelocity(1.0, 0.0, 0.0)
+            wheel_speeds, module_angles = twist_to_wheel_speeds(reference)
+
         
             commands = []
             for id in azimuth_ids:
 
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id])
                 current_angle = angle_wrap(current_angle)
-                target_angle = reference_angle
+                target_angle = module_angles.from_id(id)
                 error = angle_wrap(target_angle - current_angle)
-                target_position_delta = calculate_target_position_delta(reference_angle, current_angle)
+                target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 
                 commands.append(servos[id].make_position(
                     position=measured_module_positions[id] + target_position_delta,
@@ -99,25 +101,14 @@ async def main():
                     query=True
                 ))
 
-
-                # if id == 8:
-                #     print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
-                #     print(f"Target Position Delta: {target_position_delta:.2f}", end = " ")
-                #     print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
-                #     print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
-
-            reference_velocity = 1.25 # m/s 
-            reference_wheel_speed = wheel_speed_to_motor_speed(reference_velocity)
             for id in drive_ids:
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=reference_wheel_speed * drive_directions[id],
+                    velocity=wheel_speed_to_motor_speed(wheel_speeds.from_id(id)) * drive_directions[id],
                     maximum_torque=1.5,
                     query=True)
                 )
             
-            print("")
-
             results = await transport.cycle(commands)
 
             measured_module_positions = {

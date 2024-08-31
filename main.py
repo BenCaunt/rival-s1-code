@@ -48,6 +48,7 @@ async def main():
         result.id: result.values[moteus.Register.POSITION]
         for result in results if result.id in azimuth_ids
     }
+    print(initial_module_positions)
 
     reference_angle = math.pi / 2  # 90 degrees
     gain = 0.1

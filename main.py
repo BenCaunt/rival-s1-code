@@ -52,6 +52,13 @@ async def main():
         for servo_id in azimuth_ids + drive_ids
     }
 
+    drive_directions = {
+        1 : 1, 
+        3 : 1,
+        5 : -1,
+        7 : -1
+    }
+
     # Stop all servos
     results = await transport.cycle([x.make_stop(query=True) for x in servos.values()])
 
@@ -104,7 +111,7 @@ async def main():
             for id in drive_ids:
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=reference_wheel_speed,
+                    velocity=reference_wheel_speed * drive_directions[id],
                     maximum_torque=1.5,
                     query=True)
                 )

@@ -82,6 +82,11 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
     return WheelSpeeds(v1, v2, v3, v4), ModuleAngles(theta1, theta2, theta3, theta4)
 
 
+if __name__ == "__main__":
+    twist = Twist2dVelocity(0.0, 0.0, 1.0)
+    speeds, angles = twist_to_wheel_speeds(twist)
+    print(speeds)
 
+    print(angles)
 
 

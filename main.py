@@ -119,12 +119,12 @@ async def main():
             }
 
             # print motor speed vs expected speed
-            for id in drive_ids:
-                motor_speed = results[id].values[moteus.Register.VELOCITY]
-                wheel_speed = motor_speed_to_wheel_speed(motor_speed)
-                print(f"ID: {id}, Expected Wheel Speed: {reference_velocity:.2f} m/s, Measured Wheel Speed: {wheel_speed:.2f} m/s")
-                # expected motor vs actual motor speed 
-                print(f"ID: {id}, Expected Motor Speed: {reference_wheel_speed:.2f}, Measured Motor Speed: {motor_speed:.2f}")
+            id = 2
+            motor_speed = results[id].values[moteus.Register.VELOCITY]
+            wheel_speed = motor_speed_to_wheel_speed(motor_speed)
+            print(f"ID: {id}, Expected Wheel Speed: {reference_velocity:.2f} m/s, Measured Wheel Speed: {wheel_speed:.2f} m/s")
+            # expected motor vs actual motor speed 
+            print(f"ID: {id}, Expected Motor Speed: {reference_wheel_speed:.2f}, Measured Motor Speed: {motor_speed:.2f}")
 
 
             await asyncio.sleep(0.005)

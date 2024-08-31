@@ -106,7 +106,7 @@ async def main():
                 #     print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
                 #     print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
 
-            reference_velocity = 0.25 # m/s 
+            reference_velocity = 1.25 # m/s 
             reference_wheel_speed = wheel_speed_to_motor_speed(reference_velocity)
             for id in drive_ids:
                 commands.append(servos[id].make_position(

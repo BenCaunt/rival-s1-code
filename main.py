@@ -69,9 +69,7 @@ async def main():
                 delta = calculate_target_position_delta(reference_angle, current_angle)
                 reference = pos + gain * delta
 
-                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°, "
-                      f"Target: {math.degrees(reference_angle):.2f}°, "
-                      f"Delta: {math.degrees(delta):.2f}°", end = " ")
+                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
 
                 commands.append(servos[id].make_position(
                     position=math.nan,

@@ -22,7 +22,7 @@ def calculate_swerve_angle(position: float) -> float:
 
 def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
     angle_difference = angle_wrap(reference_azimuth_angle - estimated_angle)
-    return angle_difference / AZIMUTH_RATIO
+    return angle_difference / (2 * math.pi * AZIMUTH_RATIO)
 
 async def main():
     transport = moteus_pi3hat.Pi3HatRouter(

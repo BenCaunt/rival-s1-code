@@ -40,13 +40,15 @@ async def main():
     await transport.cycle([x.make_stop() for x in servos.values()])
 
     commands = []
-    print("Resetting encoders on azimuth modules...")
-
     for id in azimuth_ids:
-        # commands.append(servos[id].make_rezero())
-        await servos[id].set_rezero(query=True)
-    # await transport.cycle(commands)
+        commands.append(servos[id].make_rezero(query=True))
+    print("Resetting encoders on azimuth modules...")
+    results = await transport.cycle(commands)
     print("Successfully reset encoders on azimuth modules...")
+    initial_module_positions = {
+        result.id: result.values[moteus.Register.POSITION]
+        for result in results if result.id in azimuth_ids
+    }
 
     reference_angle = math.pi / 2  # 90 degrees
     gain = 0.1
@@ -71,7 +73,7 @@ async def main():
                     maximum_torque=0.1,
                     query=True
                 ))
-                current_angle = calculate_swerve_angle(measured_module_positions[id])
+                current_angle = calculate_swerve_angle(measured_module_positions[id] - initial_module_positions[id])
                 print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
 
                 

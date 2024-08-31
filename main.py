@@ -73,8 +73,8 @@ async def main():
 
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=0.0,
-                    maximum_torque=0.0,
+                    velocity=math.nan,
+                    maximum_torque=0.1,
                     query=True
                 ))
             print("")

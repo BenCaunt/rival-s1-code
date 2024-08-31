@@ -40,10 +40,12 @@ async def main():
     await transport.cycle([x.make_stop() for x in servos.values()])
 
     commands = []
-    for id in azimuth_ids:
-        commands.append(servos[id].make_rezero())
     print("Resetting encoders on azimuth modules...")
-    await transport.cycle(commands)
+
+    for id in azimuth_ids:
+        # commands.append(servos[id].make_rezero())
+        await servos[id].set_rezero(query=True)
+    # await transport.cycle(commands)
     print("Successfully reset encoders on azimuth modules...")
 
     reference_angle = math.pi / 2  # 90 degrees

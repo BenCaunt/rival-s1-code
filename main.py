@@ -77,7 +77,7 @@ async def main():
                 target_position_delta = calculate_target_position_delta(reference_angle, current_angle)
 
                 commands.append(servos[id].make_position(
-                    position=-target_position_delta,
+                    position=measured_module_positions[id] + target_position_delta,
                     velocity=0.0,
                     maximum_torque=0.4,
                     query=True

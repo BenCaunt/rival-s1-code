@@ -42,7 +42,7 @@ async def main():
     }
 
     # Stop all servos
-    results = await transport.cycle([x.make_stop() for x in servos.values()])
+    results = await transport.cycle([x.make_stop(query=True) for x in servos.values()])
 
     initial_module_positions = {
         result.id: result.values[moteus.Register.POSITION]

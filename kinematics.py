@@ -1,4 +1,5 @@
-from typing import Tuple
+import math
+from typing import List, Tuple
 from geometry2d import Twist2d, Twist2dVelocity, Vector2d
 import numpy as np
 from dataclasses import dataclass
@@ -31,6 +32,8 @@ class WheelSpeeds:
             return self.back_right
         else:
             raise ValueError(f"Invalid id: {id}")
+        
+    
 
 @dataclass
 class ModuleAngles:
@@ -51,6 +54,10 @@ class ModuleAngles:
             return self.back_right_angle
         else:
             raise ValueError(f"Invalid id: {id}")
+    def to_list(self) -> List[float]:
+        return [self.front_left_angle, self.front_right_angle, self.back_left_angle, self.back_right_angle]
+    def to_list_degrees(self) -> List[float]:
+        return [math.degrees(angle) for angle in self.to_list()]
 
 def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAngles]:
     twist = np.array([twist.vx, twist.vy, twist.w])
@@ -85,8 +92,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
 if __name__ == "__main__":
     twist = Twist2dVelocity(0.0, 0.0, 1.0)
     speeds, angles = twist_to_wheel_speeds(twist)
-    print(speeds)
 
-    print(angles)
+    print(angles.to_list_degrees())
 
 

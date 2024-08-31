@@ -75,6 +75,7 @@ async def main():
 
             reference = Twist2dVelocity(1.0, 0.0, 0.0)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference)
+            print(module_angles.to_list_degrees())
 
             commands = []
             for id in azimuth_ids:

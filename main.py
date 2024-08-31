@@ -75,9 +75,9 @@ async def main():
                 commands.append(servos[id].make_position(
                     position=measured_module_positions[id] + target_position_delta,
                     velocity=0.0,
-                    maximum_torque=1.0,
-                    velocity_limit=30.0,
-                    accel_limit=50.0,
+                    maximum_torque=1.5,
+                    velocity_limit=90.0,
+                    accel_limit=60.0,
                     query=True
                 ))
 

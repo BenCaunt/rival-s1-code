@@ -63,7 +63,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
 
     transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     twist = transform.log()
-    twist = Twist2dVelocity(twist.dx, twist.dy, twist.dyaw)
+    twist = Twist2dVelocity(twist.dx / dt, twist.dy / dt, twist.dyaw / dt)
 
     twist = np.array([twist.vx, twist.vy, twist.w])
     assert twist.shape == (3,)
@@ -96,7 +96,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
 
 
 if __name__ == "__main__":
-    twist = Twist2dVelocity(0.5, 0.0, 1.0)
+    twist = Twist2dVelocity(1.0, 0.0, 0.0)
     speeds, angles = twist_to_wheel_speeds(twist, 0.05)
 
     print(angles.to_list_degrees())

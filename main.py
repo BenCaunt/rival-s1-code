@@ -87,16 +87,15 @@ async def main():
             commands = []
             for id in azimuth_ids:
 
-                current_angle = np.pi - (calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id]))
+                current_angle = (calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id]))
                 current_angle = angle_wrap(current_angle)
-                target_angle = np.pi / 2.0 # module_angles.from_id(id)
-                target_angle = target_angle
+                target_angle = np.pi -  (np.pi / 2.0) # module_angles.from_id(id)
                 target_angle = angle_wrap(target_angle)
                 error = angle_wrap(target_angle - current_angle)
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 
                 commands.append(servos[id].make_position(
-                    position=measured_module_positions[id] - target_position_delta,
+                    position=measured_module_positions[id] + target_position_delta,
                     velocity=0.0,
                     maximum_torque=1.5,
                     velocity_limit=90.0,

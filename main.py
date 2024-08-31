@@ -42,14 +42,8 @@ async def main():
     }
 
     # Stop all servos
-    await transport.cycle([x.make_stop() for x in servos.values()])
+    results = await transport.cycle([x.make_stop() for x in servos.values()])
 
-    commands = []
-    for id in azimuth_ids:
-        commands.append(servos[id].make_rezero(query=True))
-    print("Resetting encoders on azimuth modules...")
-    results = await transport.cycle(commands)
-    print("Successfully reset encoders on azimuth modules...")
     initial_module_positions = {
         result.id: result.values[moteus.Register.POSITION]
         for result in results if result.id in azimuth_ids

@@ -66,7 +66,8 @@ async def main():
 
                 print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}°, "
                       f"Target: {math.degrees(reference_angle):.2f}°, "
-                      f"Delta: {math.degrees(delta):.2f}°")
+                      f"Delta: {math.degrees(delta):.2f}°", end = " ")
+                print("")
 
                 commands.append(servos[id].make_position(
                     position=math.nan,

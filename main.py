@@ -74,7 +74,7 @@ async def main():
 
                 commands.append(servos[id].make_position(
                     position=measured_module_positions[id] + target_position_delta,
-                    velocity=1.0,
+                    velocity=0.0,
                     maximum_torque=1.5,
                     velocity_limit=90.0,
                     accel_limit=120.0,
@@ -88,8 +88,14 @@ async def main():
                     print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
                     print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
 
-
-                
+            for id in drive_ids:
+                commands.append(servos[id].make_position(
+                    position=math.nan,
+                    velocity=1.0,
+                    maximum_torque=1.5,
+                    query=True)
+                )
+            
             print("")
 
             results = await transport.cycle(commands)

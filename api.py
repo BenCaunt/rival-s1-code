@@ -14,13 +14,13 @@ from pydantic import BaseModel, Field
 import uvicorn
 from contextlib import asynccontextmanager
 import asyncio
-from main import main
+import main
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(main())
+    asyncio.create_task(main.main())
     yield
     # Run on shutdown (if required)
     print("Shutting down...")
@@ -52,7 +52,7 @@ async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandRespo
     """Set the field relative velocity of the robot. The units are m/s and rad/s."""
 
     main.reference_velocity = new_velocity.vx
-    main.reference_angle = math.radians(new_velocity.vy)
+    main.reference_angle = math.radians(new_velocity.omega)
 
     return RobotCommandResponse(success=True)
 

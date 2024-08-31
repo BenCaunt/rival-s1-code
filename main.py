@@ -93,11 +93,11 @@ async def main():
                 ))
 
 
-                if id == 8:
-                    print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
-                    print(f"Target Position Delta: {target_position_delta:.2f}", end = " ")
-                    print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
-                    print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
+                # if id == 8:
+                #     print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
+                #     print(f"Target Position Delta: {target_position_delta:.2f}", end = " ")
+                #     print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
+                #     print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
 
             reference_velocity = 0.25 # m/s 
             reference_wheel_speed = wheel_speed_to_motor_speed(reference_velocity)
@@ -117,6 +117,16 @@ async def main():
                 result.id: result.values[moteus.Register.POSITION]
                 for result in results if result.id in azimuth_ids
             }
+
+            # print motor speed vs expected speed
+            for id in drive_ids:
+                motor_speed = results[id].values[moteus.Register.VELOCITY]
+                wheel_speed = motor_speed_to_wheel_speed(motor_speed)
+                print(f"ID: {id}, Expected Wheel Speed: {reference_velocity:.2f} m/s, Measured Wheel Speed: {wheel_speed:.2f} m/s")
+                # expected motor vs actual motor speed 
+                print(f"ID: {id}, Expected Motor Speed: {reference_wheel_speed:.2f}, Measured Motor Speed: {motor_speed:.2f}")
+
+
             await asyncio.sleep(0.005)
 
     except KeyboardInterrupt:

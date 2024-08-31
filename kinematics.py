@@ -81,11 +81,11 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity) -> Tuple[WheelSpeeds, ModuleAn
     v2 = np.sqrt(speeds[2] ** 2 + speeds[3] ** 2)
     v3 = np.sqrt(speeds[4] ** 2 + speeds[5] ** 2)
     v4 = np.sqrt(speeds[6] ** 2 + speeds[7] ** 2)
-
+    
     theta1 = np.arctan2(speeds[1], speeds[0])
-    theta2 = np.arctan2(speeds[2],speeds[3])
+    theta2 = np.arctan2(speeds[3], speeds[2])
     theta3 = np.arctan2(speeds[5], speeds[4])
-    theta4 = np.arctan2(speeds[6],speeds[7])
+    theta4 = np.arctan2(speeds[7], speeds[6])
 
     return WheelSpeeds(v1, v2, v3, v4), ModuleAngles(theta1, theta2, theta3, theta4)
 

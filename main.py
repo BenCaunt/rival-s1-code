@@ -84,7 +84,12 @@ async def main():
                 ))
 
 
-                print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
+                if id == 8:
+                    print(f"ID: {id}, Current Angle Error: {math.degrees(error):.2f}°", end = " ")
+                    print(f"Target Position Delta: {target_position_delta:.2f}", end = " ")
+                    print(f"Current Angle: {math.degrees(current_angle):.2f}°", end = " ")
+                    print(f"raw position: {measured_module_positions[id]:.2f}", end = " ")
+
 
                 
             print("")

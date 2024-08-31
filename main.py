@@ -107,7 +107,7 @@ async def main():
             for id in drive_ids:
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=wheel_speed_to_motor_speed(0.5) * drive_directions[id], # wheel_speeds.from_id(id)
+                    velocity=wheel_speeds.from_id(id) * drive_directions[id],
                     maximum_torque=1.5,
                     query=True)
                 )

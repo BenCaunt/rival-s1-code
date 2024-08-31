@@ -7,6 +7,7 @@
 # ]
 # ///
 
+import math
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field
@@ -46,15 +47,12 @@ class RobotCommandResponse(BaseModel):
     success: bool = Field(..., description="Whether the command was successful or not")
 
 
-velocity = FieldRelativeVelocity(vx=0, vy=0, omega=0)
-
-
 @app.post("/set-velocity", tags=["robot_control"])
 async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandResponse:
     """Set the field relative velocity of the robot. The units are m/s and rad/s."""
 
-    global velocity
-    velocity = new_velocity
+    main.reference_velocity = new_velocity.vx
+    main.reference_angle = math.radians(new_velocity.vy)
 
     return RobotCommandResponse(success=True)
 

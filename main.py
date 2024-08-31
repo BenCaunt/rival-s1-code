@@ -67,7 +67,6 @@ async def main():
         result.id: result.values[moteus.Register.POSITION]
         for result in results if result.id in azimuth_ids
     }
-    print(initial_module_positions)
 
     measured_module_positions = {
         2: 0.0,
@@ -88,7 +87,7 @@ async def main():
 
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(initial_module_positions[id])
                 current_angle = angle_wrap(current_angle)
-                target_angle = module_angles.from_id(id)
+                target_angle = 0.0 # module_angles.from_id(id)
                 error = angle_wrap(target_angle - current_angle)
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 
@@ -104,7 +103,7 @@ async def main():
             for id in drive_ids:
                 commands.append(servos[id].make_position(
                     position=math.nan,
-                    velocity=wheel_speed_to_motor_speed(wheel_speeds.from_id(id)) * drive_directions[id],
+                    velocity=wheel_speed_to_motor_speed(0.5) * drive_directions[id], # wheel_speeds.from_id(id)
                     maximum_torque=1.5,
                     query=True)
                 )

@@ -77,8 +77,8 @@ async def main():
                 target_position_delta = calculate_target_position_delta(reference_angle, current_angle)
 
                 commands.append(servos[id].make_position(
-                    position=math.nan,
-                    velocity=1.0,
+                    position=target_position_delta,
+                    velocity=math.nan,
                     maximum_torque=0.1,
                     query=True
                 ))

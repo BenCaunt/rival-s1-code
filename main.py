@@ -15,7 +15,7 @@ DRIVE_CIRCUMFERENCE = DRIVE_DIAMETER * math.pi
 
 # GLOBAL STATE
 reference_angle = math.radians(90.0)  # radians
-reference_velocity = 1.25  # m/s
+reference_velocity = 0.0  # m/s
 gain = 0.1
 
 

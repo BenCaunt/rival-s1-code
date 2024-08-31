@@ -96,7 +96,7 @@ async def main():
                 result.id: result.values[moteus.Register.POSITION]
                 for result in results if result.id in azimuth_ids
             }
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.01)
 
     except KeyboardInterrupt:
         print("\nStopping all servos...")

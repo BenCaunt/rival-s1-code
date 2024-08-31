@@ -68,7 +68,7 @@ async def main():
     }
     print(initial_module_positions)
 
-    reference_angle = math.pi / 2  # 90 degrees
+    reference_angle = 0.0
     gain = 0.1
 
     measured_module_positions = {

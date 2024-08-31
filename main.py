@@ -82,8 +82,10 @@ async def main():
                     maximum_torque=0.1,
                     query=True
                 ))
-                
-                print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}° {target_position_delta},", end = " ")
+
+
+                if id == 2:
+                    print(f"ID: {id}, Current Angle: {math.degrees(current_angle):.2f}° {target_position_delta}, {calculate_swerve_angle(target_position_delta)}", end = " ")
 
                 
             print("")

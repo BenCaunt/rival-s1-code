@@ -4,15 +4,15 @@ from geometry2d import Transform2d, Twist2d, Twist2dVelocity, Vector2d
 import numpy as np
 from dataclasses import dataclass
 
-wheel_base = 139.00000 / 1000.0 # 139 mm
-track_width = 139.00000 / 1000.0 # 139 mm
+wheel_base = 139.00000 / 1000.0  # 139 mm
+track_width = 139.00000 / 1000.0  # 139 mm
 
 
+fl_pos = Vector2d(wheel_base / 2, track_width / 2)  # v1
+fr_pos = Vector2d(wheel_base / 2, -track_width / 2)  # v2
+bl_pos = Vector2d(-wheel_base / 2, track_width / 2)  # v3
+br_pos = Vector2d(-wheel_base / 2, -track_width / 2)  # v4
 
-fl_pos = Vector2d(wheel_base / 2, track_width / 2) # v1 
-fr_pos = Vector2d(wheel_base / 2, -track_width / 2) # v2 
-bl_pos = Vector2d(-wheel_base / 2, track_width / 2) # v3 
-br_pos = Vector2d(-wheel_base / 2, -track_width / 2) # v4 
 
 @dataclass
 class WheelSpeeds:
@@ -20,6 +20,7 @@ class WheelSpeeds:
     front_right: float
     back_left: float
     back_right: float
+
     def from_id(self, id: int) -> float:
         assert id % 2 == 1
         if id == 1:
@@ -32,8 +33,7 @@ class WheelSpeeds:
             return self.back_right
         else:
             raise ValueError(f"Invalid id: {id}")
-        
-    
+
 
 @dataclass
 class ModuleAngles:
@@ -54,15 +54,15 @@ class ModuleAngles:
             return self.back_right_angle
         else:
             raise ValueError(f"Invalid id: {id}")
+
     def to_list(self) -> List[float]:
         return [self.front_left_angle, self.front_right_angle, self.back_left_angle, self.back_right_angle]
+
     def to_list_degrees(self) -> List[float]:
         return [math.degrees(angle) for angle in self.to_list()]
 
+
 def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeeds, ModuleAngles]:
-
-
-    
 
     transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     twist = transform.log()
@@ -70,17 +70,17 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
 
     twist = np.array([twist.vx, twist.vy, twist.w])
 
-    if epsilon_equals(twist[0],0,0.05) and epsilon_equals(twist[1],0,0.05) and not epsilon_equals(twist[2],0,0.05):
+    if epsilon_equals(twist[0], 0, 0.05) and epsilon_equals(twist[1], 0, 0.05) and not epsilon_equals(twist[2], 0, 0.05):
         theta1 = np.deg2rad(-45)
         theta2 = np.deg2rad(45)
         theta3 = np.deg2rad(-45)
         theta4 = np.deg2rad(45)
 
-        radius = np.sqrt(wheel_base * wheel_base) # hypotenuse divided by 2 to get distance from center to wheel
+        radius = np.sqrt(wheel_base * wheel_base)  # hypotenuse divided by 2 to get distance from center to wheel
         # w = v / r
         # v = w * r
         v1 = -twist[2] * radius
-        v2 = -twist[2] * radius
+        v2 = twist[2] * radius
         v3 = twist[2] * radius
         v4 = -twist[2] * radius
     else:
@@ -93,7 +93,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
                 [1, 0, -bl_pos.y],
                 [0, 1, bl_pos.x],
                 [1, 0, -br_pos.y],
-                [0, 1, br_pos.x]
+                [0, 1, br_pos.x],
             ]
         )
         speeds = np.dot(transition, twist.transpose())
@@ -102,7 +102,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
         v2 = np.sqrt(speeds[2] ** 2 + speeds[3] ** 2)
         v3 = np.sqrt(speeds[4] ** 2 + speeds[5] ** 2)
         v4 = np.sqrt(speeds[6] ** 2 + speeds[7] ** 2)
-        
+
         theta1 = np.arctan2(speeds[1], speeds[0])
         theta2 = np.arctan2(speeds[3], speeds[2])
         theta3 = np.arctan2(speeds[5], speeds[4])
@@ -120,8 +120,6 @@ if __name__ == "__main__":
     print(speeds.front_right)
     print(speeds.back_left)
     print(speeds.back_right)
-
-
 
 
 def epsilon_equals(a: float, b: float, epsilon: float) -> bool:

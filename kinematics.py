@@ -25,11 +25,11 @@ class WheelSpeeds:
         assert id % 2 == 1
         if id == 1:
             return self.front_left
-        elif id == 3:
-            return self.front_right
-        elif id == 5:
-            return self.back_left
         elif id == 7:
+            return self.front_right
+        elif id == 3:
+            return self.back_left
+        elif id == 5:
             return self.back_right
         else:
             raise ValueError(f"Invalid id: {id}")
@@ -46,11 +46,11 @@ class ModuleAngles:
         assert id % 2 == 0
         if id == 2:
             return self.front_left_angle
-        elif id == 4:
-            return self.front_right_angle
-        elif id == 6:
-            return self.back_left_angle
         elif id == 8:
+            return self.front_right_angle
+        elif id == 4:
+            return self.back_left_angle
+        elif id == 6:
             return self.back_right_angle
         else:
             raise ValueError(f"Invalid id: {id}")
@@ -79,9 +79,9 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
         radius = np.sqrt(wheel_base * wheel_base)  # hypotenuse divided by 2 to get distance from center to wheel
         # w = v / r
         # v = w * r
-        v1 = -twist[2] * radius
+        v1 = twist[2] * radius
         v2 = twist[2] * radius
-        v3 = -twist[2] * radius
+        v3 = twist[2] * radius
         v4 = twist[2] * radius
     else:
         transition = np.array(

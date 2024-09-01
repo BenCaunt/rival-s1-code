@@ -51,8 +51,9 @@ class RobotCommandResponse(BaseModel):
 async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandResponse:
     """Set the field relative velocity of the robot. The units are m/s and rad/s."""
 
-    main.reference_velocity = new_velocity.vx
-    main.reference_angle = math.radians(new_velocity.omega)
+    main.reference_vx = new_velocity.vx
+    main.reference_vy = new_velocity.vy
+    main.reference_w = math.radians(new_velocity.omega)
 
     return RobotCommandResponse(success=True)
 

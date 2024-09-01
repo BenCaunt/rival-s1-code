@@ -16,8 +16,10 @@ DRIVE_DIAMETER = 0.075  # 75 mm
 DRIVE_CIRCUMFERENCE = DRIVE_DIAMETER * math.pi
 
 # GLOBAL STATE
-reference_angle = math.radians(90.0)  # radians
-reference_velocity = 0.0  # m/s
+reference_vx = 0.0  # m/s
+reference_vy = 0.0  # m/s
+reference_w = 0.0  # rad/s
+
 gain = 0.1
 
 from kinematics import twist_to_wheel_speeds, WheelSpeeds, ModuleAngles
@@ -77,9 +79,7 @@ async def main():
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
 
-
-
-            reference = Twist2dVelocity(1.0, 0.0, 0.0)
+            reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)
             print(module_angles.to_list_degrees())
 

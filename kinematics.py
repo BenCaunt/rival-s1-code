@@ -66,7 +66,6 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
     twist = Twist2dVelocity(twist.dx / dt, twist.dy / dt, twist.dyaw / dt)
 
     twist = np.array([twist.vx, twist.vy, twist.w])
-    assert twist.shape == (3,)
 
     transition = np.array(
         [

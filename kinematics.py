@@ -76,13 +76,13 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
         theta3 = np.deg2rad(-45)
         theta4 = np.deg2rad(45)
 
-        radius = (wheel_base * wheel_base) / 2 # hypotenuse divided by 2 to get distance from center to wheel
+        radius = np.sqrt(wheel_base * wheel_base) / 2 # hypotenuse divided by 2 to get distance from center to wheel
         # w = v / r
         # v = w * r
-        v1 = -twist[2] / radius
-        v2 = -twist[2] / radius
-        v3 = twist[2] / radius
-        v4 = -twist[2] / radius
+        v1 = -twist[2] * radius
+        v2 = -twist[2] * radius
+        v3 = twist[2] * radius
+        v4 = -twist[2] * radius
     else:
         transition = np.array(
             [

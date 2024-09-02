@@ -23,12 +23,12 @@ command_queue = JoinableQueue()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    # asyncio.create_task(main.main())
-    def start_main(command_queue: JoinableQueue):
-        asyncio.run(main.main(command_queue))
+    asyncio.create_task(main.main())
+    # def start_main(command_queue: JoinableQueue):
+    #     asyncio.run(main.main(command_queue))
 
-    p = Process(target=start_main, args=(command_queue,))
-    p.start()
+    # p = Process(target=start_main, args=(command_queue,))
+    # p.start()
     yield
     # Run on shutdown (if required)
     print("Shutting down...")

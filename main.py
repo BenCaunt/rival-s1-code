@@ -52,7 +52,7 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
     return angle_difference / (2 * math.pi * AZIMUTH_RATIO)
 
 
-async def main(command_queue: JoinableQueue):
+async def main():
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
     )
@@ -83,17 +83,17 @@ async def main(command_queue: JoinableQueue):
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
 
-            if not command_queue.empty():
-                command = command_queue.get()
-                global reference_vx, reference_vy, reference_w
+            # if not command_queue.empty():
+            #     command = command_queue.get()
+            #     global reference_vx, reference_vy, reference_w
 
-                reference_vx = command.vx
-                reference_vy = command.vy
-                reference_w = command.omega
+            #     reference_vx = command.vx
+            #     reference_vy = command.vy
+            #     reference_w = command.omega
 
-                command_queue.task_done()
+            #     command_queue.task_done()
 
-                print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
+            #     print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)

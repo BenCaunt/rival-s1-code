@@ -91,6 +91,7 @@ async def main(command_queue: Queue):
                 reference_vx = command.vx
                 reference_vy = command.vy
                 reference_w = command.w
+                print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)

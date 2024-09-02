@@ -158,7 +158,7 @@ async def main():
                     )
                 )
 
-            results = await transport.cycle(commands)
+            results = await transport.cycle(commands, request_attitude=True)
 
             imu_result = [x for x in results if x.id == -1 and isinstance(x, moteus_pi3hat.CanAttitudeWrapper)][0]
             yaw = imu_result.euler_rad.yaw

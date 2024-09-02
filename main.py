@@ -4,7 +4,6 @@ import asyncio
 import math
 
 import numpy as np
-from api import FieldRelativeVelocity
 import moteus
 import moteus_pi3hat
 import time
@@ -85,7 +84,7 @@ async def main(command_queue: Queue):
             loop_start = time.monotonic()
 
             if not command_queue.empty():
-                command: FieldRelativeVelocity = command_queue.get()
+                command = command_queue.get()
                 global reference_vx, reference_vy, reference_w
 
                 reference_vx = command.vx

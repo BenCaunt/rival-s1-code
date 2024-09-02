@@ -151,7 +151,7 @@ async def main():
                         * wheel_speed_to_motor_speed(wheel_speeds.from_id(id))
                         * drive_directions[id],
                         maximum_torque=1.5,
-                        accel_limit=10.0,
+                        accel_limit=60.0,
                         query=True,
                     )
                 )

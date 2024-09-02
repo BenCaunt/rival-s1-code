@@ -66,8 +66,9 @@ def robot_relative_velocity_to_twist(twist: Twist2dVelocity, dt, yaw: float) -> 
     tf = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     # rotate by yaw
     tf = Transform2d(0, 0, yaw) * tf
-    twist = tf.log()
-    return twist_to_wheel_speeds(twist, dt)
+    twist_dx = tf.log()
+    twists_v = Twist2dVelocity(twist_dx.dx / dt, twist_dx.dy / dt, twist_dx.dyaw / dt)
+    return twist_to_wheel_speeds(twists_v, dt)
 
 
 def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeeds, ModuleAngles]:
@@ -123,7 +124,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
 
 if __name__ == "__main__":
     twist = Twist2dVelocity(1.0, 0.0, 0.0)
-    speeds, angles = robot_relative_velocity_to_twist(twist, 0.05)
+    speeds, angles = twist_to_wheel_speeds(twist, 0.05)
 
     print(angles.to_list_degrees())
     print(speeds.front_left)

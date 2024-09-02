@@ -97,7 +97,7 @@ async def main():
                 target_angle = -angle_wrap(target_angle)
 
                 if module_inversions[id]:
-                    target_angle = np.pi - target_angle
+                    target_angle = angle_wrap(np.pi - target_angle)
 
                 error = angle_wrap(target_angle - current_angle)
 

@@ -62,6 +62,14 @@ class ModuleAngles:
         return [math.degrees(angle) for angle in self.to_list()]
 
 
+def robot_relative_velocity_to_twist(twist: Twist2dVelocity, dt, yaw: float) -> Tuple[WheelSpeeds, ModuleAngles]:
+    tf = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
+    # rotate by yaw
+    tf = Transform2d(0, 0, yaw) * tf
+    twist = tf.log()
+    return twist_to_wheel_speeds(twist, dt)
+
+
 def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeeds, ModuleAngles]:
 
     transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
@@ -115,13 +123,18 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
 
 if __name__ == "__main__":
     twist = Twist2dVelocity(1.0, 0.0, 0.0)
-    speeds, angles = twist_to_wheel_speeds(twist, 0.05)
+    speeds, angles = robot_relative_velocity_to_twist(twist, 0.05)
 
     print(angles.to_list_degrees())
     print(speeds.front_left)
     print(speeds.front_right)
     print(speeds.back_left)
     print(speeds.back_right)
+    dt = 1.0
+    yaw = np.deg2rad(90.0)
+    tf = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
+    tf = Transform2d(0, 0, yaw) * tf
+    print(tf.x, tf.y, tf.theta)
 
 
 def epsilon_equals(a: float, b: float, epsilon: float) -> bool:

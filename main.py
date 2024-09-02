@@ -23,7 +23,7 @@ reference_w = 0.0  # rad/s
 
 gain = 0.1
 
-from kinematics import twist_to_wheel_speeds, WheelSpeeds, ModuleAngles
+from kinematics import robot_relative_velocity_to_twist, twist_to_wheel_speeds, WheelSpeeds, ModuleAngles
 from geometry2d import Twist2dVelocity
 
 
@@ -71,6 +71,8 @@ async def main():
         result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids
     }
 
+    yaw = 0.0
+
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
     module_scaling = {2: 1.0, 4: 1.0, 6: 1.0, 8: 1.0}
     module_inversions = {2: False, 4: False, 6: False, 8: False}
@@ -96,7 +98,7 @@ async def main():
             #     print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
-            wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)
+            wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, yaw)
             # print(module_angles.to_list_degrees())
 
             commands = []
@@ -114,7 +116,7 @@ async def main():
                 #     target_angle = angle_wrap(np.pi - target_angle)
 
                 error = angle_wrap(target_angle - current_angle)
-                print(f"error: {math.degrees(error)}")
+                # print(f"error: {math.degrees(error)}")
 
                 module_scaling[id] = np.cos(np.clip(error, -np.pi / 2, np.pi / 2))
 
@@ -157,6 +159,9 @@ async def main():
                 )
 
             results = await transport.cycle(commands)
+
+            imu_result = [x for x in results if x.id == -1 and isinstance(x, moteus_pi3hat.CanAttitudeWrapper)][0]
+            yaw = imu_result.euler_rad.yaw
 
             measured_module_positions = {
                 result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids

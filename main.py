@@ -101,9 +101,10 @@ async def main():
 
                 error = angle_wrap(target_angle - current_angle)
 
+                if id == 2 and module_inversions[id]:
+                    print(f"inverting module {id}")
+
                 if abs(error) > np.pi / 2:
-                    if id == 2:
-                        print(f"inverting module {id}")
                     module_inversions[id] = not module_inversions[id]
 
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)

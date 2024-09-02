@@ -31,6 +31,9 @@ class Vector2d:
     def norm(self) -> float:
         return (self.x**2 + self.y**2) ** 0.5
 
+    def rotate(self, angle: float) -> "Vector2d":
+        return Vector2d(self.x * cos(angle) - self.y * sin(angle), self.x * sin(angle) + self.y * cos(angle))
+
 
 @dataclass
 class Transform2d:

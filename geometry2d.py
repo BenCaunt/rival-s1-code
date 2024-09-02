@@ -59,10 +59,9 @@ class Transform2d:
 
 @dataclass
 class Twist2d:
-    def __init__(self, dx: float, dy: float, dyaw: float):
-        self.dx = dx
-        self.dy = dy
-        self.dyaw = dyaw
+    dx: float
+    dy: float
+    dyaw: float
 
     @classmethod
     def from_velocity(cls, vx: float, vy: float, w: float, dt: float) -> "Twist2d":
@@ -81,6 +80,7 @@ class Twist2d:
         return Twist2dVelocity(self.dx / dt, self.dy / dt, self.dyaw / dt)
 
 
+@dataclass
 class Twist2dVelocity:
     def __init__(self, vx: float, vy: float, w: float):
         self.vx = vx

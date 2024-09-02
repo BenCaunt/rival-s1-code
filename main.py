@@ -120,7 +120,7 @@ async def main():
             for id in drive_ids:
                 sign = 1.0
 
-                if module_inversions[id]:
+                if module_inversions[id + 1]:
                     sign = -1.0
 
                 commands.append(

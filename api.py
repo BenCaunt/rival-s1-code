@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     yield
     # Run on shutdown (if required)
     print("Shutting down...")
-    p.terminate()
+    # p.terminate()
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -60,10 +60,10 @@ class RobotCommandResponse(BaseModel):
 async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandResponse:
     """Set the field relative velocity of the robot. The units are m/s and rad/s."""
 
-    # main.reference_vx = new_velocity.vx
-    # main.reference_vy = new_velocity.vy
-    # main.reference_w = math.radians(new_velocity.omega)
-    command_queue.put(new_velocity)
+    main.reference_vx = new_velocity.vx
+    main.reference_vy = new_velocity.vy
+    main.reference_w = math.radians(new_velocity.omega)
+    # command_queue.put(new_velocity)
 
     return RobotCommandResponse(success=True)
 

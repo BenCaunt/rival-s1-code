@@ -4,10 +4,12 @@ import asyncio
 import math
 
 import numpy as np
+from api import FieldRelativeVelocity
 import moteus
 import moteus_pi3hat
 import time
 from tqdm import tqdm
+from multiprocessing import Queue
 
 AZIMUTH_RATIO = 12.0 / 83.0
 DRIVE_REDUCTION = 17.0 / 54.0
@@ -51,7 +53,7 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
     return angle_difference / (2 * math.pi * AZIMUTH_RATIO)
 
 
-async def main():
+async def main(command_queue: Queue):
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
     )
@@ -81,6 +83,14 @@ async def main():
         while True:
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
+
+            if not command_queue.empty():
+                command: FieldRelativeVelocity = command_queue.get()
+                global reference_vx, reference_vy, reference_w
+
+                reference_vx = command.vx
+                reference_vy = command.vy
+                reference_w = command.w
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)

@@ -14,16 +14,25 @@ from pydantic import BaseModel, Field
 import uvicorn
 from contextlib import asynccontextmanager
 import asyncio
+from multiprocessing import Process, Queue
 import main
+
+command_queue = Queue()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(main.main())
+    # asyncio.create_task(main.main())
+    def start_main(command_queue: Queue):
+        asyncio.run(main.main(command_queue))
+
+    p = Process(target=start_main, args=(command_queue,))
+    p.start()
     yield
     # Run on shutdown (if required)
     print("Shutting down...")
+    p.terminate()
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -51,9 +60,10 @@ class RobotCommandResponse(BaseModel):
 async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandResponse:
     """Set the field relative velocity of the robot. The units are m/s and rad/s."""
 
-    main.reference_vx = new_velocity.vx
-    main.reference_vy = new_velocity.vy
-    main.reference_w = math.radians(new_velocity.omega)
+    # main.reference_vx = new_velocity.vx
+    # main.reference_vy = new_velocity.vy
+    # main.reference_w = math.radians(new_velocity.omega)
+    command_queue.put(new_velocity)
 
     return RobotCommandResponse(success=True)
 

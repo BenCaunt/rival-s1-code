@@ -68,6 +68,7 @@ def robot_relative_velocity_to_twist(twist: Twist2dVelocity, dt, yaw: float) -> 
     # rotate by yaw
     tf = Transform2d(0, 0, yaw) * tf
     twist_dx = tf.log()
+    print(twist_dx)
     twists_v = Twist2dVelocity(twist_dx.dx / dt, twist_dx.dy / dt, twist_dx.dyaw / dt)
     return twist_to_wheel_speeds(twists_v, dt)
 

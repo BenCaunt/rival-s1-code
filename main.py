@@ -97,8 +97,8 @@ async def main():
                 # this makes it so + is ccw with module rotation.
                 target_angle = -angle_wrap(target_angle)
 
-                if module_inversions[id]:
-                    target_angle = angle_wrap(np.pi - target_angle)
+                # if module_inversions[id]:
+                #     target_angle = angle_wrap(np.pi - target_angle)
 
                 error = angle_wrap(target_angle - current_angle)
 
@@ -126,8 +126,8 @@ async def main():
             for id in drive_ids:
                 sign = 1.0
 
-                if module_inversions[id + 1]:
-                    sign = -1.0
+                # if module_inversions[id + 1]:
+                #     sign = -1.0
 
                 commands.append(
                     servos[id].make_position(

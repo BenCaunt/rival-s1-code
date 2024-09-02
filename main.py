@@ -84,7 +84,7 @@ async def main():
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = twist_to_wheel_speeds(reference, dt)
-            print(module_angles.to_list_degrees())
+            # print(module_angles.to_list_degrees())
 
             commands = []
             for id in azimuth_ids:
@@ -101,11 +101,12 @@ async def main():
                 #     target_angle = angle_wrap(np.pi - target_angle)
 
                 error = angle_wrap(target_angle - current_angle)
+                print(f"error: {math.degrees(error)}")
 
                 module_scaling[id] = np.cos(np.clip(error, -np.pi / 2, np.pi / 2))
 
-                if id == 2 and module_inversions[id]:
-                    print(f"inverting module {id}")
+                # if id == 2 and module_inversions[id]:
+                #     print(f"inverting module {id}")
 
                 if abs(error) > np.pi / 2:
                     module_inversions[id] = not module_inversions[id]

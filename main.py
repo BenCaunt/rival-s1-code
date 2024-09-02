@@ -71,10 +71,12 @@ async def main():
     }
 
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
+    module_inversions = {2: False, 4: False, 6: False, 8: False}
 
     try:
         loop_start = time.monotonic()
         dt = 0.005
+
         while True:
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
@@ -93,7 +95,15 @@ async def main():
                 target_angle = module_angles.from_id(id)
                 # this makes it so + is ccw with module rotation.
                 target_angle = -angle_wrap(target_angle)
+
+                if module_inversions[id]:
+                    target_angle = np.pi - target_angle
+
                 error = angle_wrap(target_angle - current_angle)
+
+                if abs(error) > np.pi / 2:
+                    module_inversions[id] = not module_inversions[id]
+
                 target_position_delta = calculate_target_position_delta(target_angle, current_angle)
 
                 commands.append(
@@ -108,10 +118,15 @@ async def main():
                 )
 
             for id in drive_ids:
+                sign = 1.0
+
+                if module_inversions[id]:
+                    sign = -1.0
+
                 commands.append(
                     servos[id].make_position(
                         position=math.nan,
-                        velocity=wheel_speed_to_motor_speed(wheel_speeds.from_id(id)) * drive_directions[id],
+                        velocity=sign * wheel_speed_to_motor_speed(wheel_speeds.from_id(id)) * drive_directions[id],
                         maximum_torque=1.5,
                         query=True,
                     )

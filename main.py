@@ -8,7 +8,7 @@ import moteus
 import moteus_pi3hat
 import time
 from tqdm import tqdm
-from multiprocessing import Queue
+from multiprocessing import JoinableQueue
 
 AZIMUTH_RATIO = 12.0 / 83.0
 DRIVE_REDUCTION = 17.0 / 54.0
@@ -52,7 +52,7 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
     return angle_difference / (2 * math.pi * AZIMUTH_RATIO)
 
 
-async def main(command_queue: Queue):
+async def main(command_queue: JoinableQueue):
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
     )
@@ -90,6 +90,9 @@ async def main(command_queue: Queue):
                 reference_vx = command.vx
                 reference_vy = command.vy
                 reference_w = command.omega
+
+                command_queue.task_done()
+
                 print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)

@@ -14,17 +14,17 @@ from pydantic import BaseModel, Field
 import uvicorn
 from contextlib import asynccontextmanager
 import asyncio
-from multiprocessing import Process, Queue
+from multiprocessing import Process, JoinableQueue
 import main
 
-command_queue = Queue()
+command_queue = JoinableQueue()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
     # asyncio.create_task(main.main())
-    def start_main(command_queue: Queue):
+    def start_main(command_queue: JoinableQueue):
         asyncio.run(main.main(command_queue))
 
     p = Process(target=start_main, args=(command_queue,))

@@ -111,7 +111,7 @@ async def main(command_queue: Queue):
                 #     target_angle = angle_wrap(np.pi - target_angle)
 
                 error = angle_wrap(target_angle - current_angle)
-                print(f"error: {math.degrees(error)}")
+                # print(f"error: {math.degrees(error)}")
 
                 module_scaling[id] = np.cos(np.clip(error, -np.pi / 2, np.pi / 2))
 

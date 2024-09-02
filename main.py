@@ -71,6 +71,7 @@ async def main():
     }
 
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
+    module_scaling = {2: 1.0, 4: 1.0, 6: 1.0, 8: 1.0}
     module_inversions = {2: False, 4: False, 6: False, 8: False}
 
     try:
@@ -101,6 +102,8 @@ async def main():
 
                 error = angle_wrap(target_angle - current_angle)
 
+                module_scaling[id] = np.cos(np.clip(error, -np.pi / 2, np.pi / 2))
+
                 if id == 2 and module_inversions[id]:
                     print(f"inverting module {id}")
 
@@ -129,7 +132,10 @@ async def main():
                 commands.append(
                     servos[id].make_position(
                         position=math.nan,
-                        velocity=sign * wheel_speed_to_motor_speed(wheel_speeds.from_id(id)) * drive_directions[id],
+                        velocity=module_scaling[id + 1]
+                        * sign
+                        * wheel_speed_to_motor_speed(wheel_speeds.from_id(id))
+                        * drive_directions[id],
                         maximum_torque=1.5,
                         query=True,
                     )

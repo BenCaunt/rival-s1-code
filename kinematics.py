@@ -63,6 +63,7 @@ class ModuleAngles:
 
 
 def robot_relative_velocity_to_twist(twist: Twist2dVelocity, dt, yaw: float) -> Tuple[WheelSpeeds, ModuleAngles]:
+    print(f"yaw: {yaw}")
     tf = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     # rotate by yaw
     tf = Transform2d(0, 0, yaw) * tf

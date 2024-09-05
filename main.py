@@ -99,6 +99,7 @@ async def main():
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, -yaw)
+            print("Yaw anglwe: ", yaw)
             # print(module_angles.to_list_degrees())
 
             commands = []

@@ -104,7 +104,7 @@ async def main():
 
             commands = []
             for id in azimuth_ids:
-
+                print(f"Module {id}")
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(
                     initial_module_positions[id]
                 )

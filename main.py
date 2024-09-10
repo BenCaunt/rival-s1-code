@@ -27,6 +27,9 @@ from kinematics import robot_relative_velocity_to_twist, twist_to_wheel_speeds, 
 from geometry2d import Twist2dVelocity
 
 
+is_initial_angle = False
+initial_angle = 0.0
+
 def angle_wrap(angle):
     while angle > math.pi:
         angle -= 2 * math.pi
@@ -163,7 +166,13 @@ async def main():
             results = await transport.cycle(commands, request_attitude=True)
 
             imu_result = [x for x in results if x.id == -1 and isinstance(x, moteus_pi3hat.CanAttitudeWrapper)][0]
-            yaw = imu_result.euler_rad.yaw
+
+            if is_initial_angle:
+                initial_angle = imu_result.euler_rad.yaw
+                is_initial_angle = False
+
+
+            yaw = angle_wrap(imu_result.euler_rad.yaw - initial_angle)
 
             measured_module_positions = {
                 result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids

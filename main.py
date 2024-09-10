@@ -54,11 +54,11 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
 
 async def main():
     transport = moteus_pi3hat.Pi3HatRouter(
-        servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6]},  # 7, 8 usually goes in 3 but is not functional at this time
+        servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7,8]},
     )
 
-    azimuth_ids = [2, 4, 6]
-    drive_ids = [1, 3, 5]
+    azimuth_ids = [2, 4, 6, 8]
+    drive_ids = [1, 3, 5, 7]
 
     servos = {servo_id: moteus.Controller(id=servo_id, transport=transport) for servo_id in azimuth_ids + drive_ids}
 

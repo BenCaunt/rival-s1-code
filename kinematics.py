@@ -74,7 +74,7 @@ def apply_acceleration_limit(twist: Twist2dVelocity, dt: float) -> Twist2dVeloci
     # the borrow checker should really be smart enough to figure out that this is safe in this case.  I love python.
     global prev_twist
     max_acceleration = 10.0
-    max_angular_acceleration = 1.5
+    max_angular_acceleration = np.deg2rad(360 * 5)
 
     delta_twist = twist - prev_twist
 

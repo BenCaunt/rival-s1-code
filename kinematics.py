@@ -13,6 +13,7 @@ fr_pos = Vector2d(wheel_base / 2, -track_width / 2)  # v2
 bl_pos = Vector2d(-wheel_base / 2, track_width / 2)  # v3
 br_pos = Vector2d(-wheel_base / 2, -track_width / 2)  # v4
 
+prev_twist = Twist2dVelocity(0, 0, 0)
 
 @dataclass
 class WheelSpeeds:
@@ -62,18 +63,35 @@ class ModuleAngles:
         return [math.degrees(angle) for angle in self.to_list()]
 
 
+
 def robot_relative_velocity_to_twist(twist: Twist2dVelocity, dt, yaw: float) -> Tuple[WheelSpeeds, ModuleAngles]:
     v = Vector2d(twist.vx, twist.vy)
     v = v.rotate(-yaw)
     twist = Twist2dVelocity(v.x, v.y, twist.w)
     return twist_to_wheel_speeds(twist, dt)
 
+def apply_acceleration_limit(twist: Twist2dVelocity, dt: float) -> Twist2dVelocity:
+    # the borrow checker should really be smart enough to figure out that this is safe in this case.  I love python.
+    global prev_twist
+    max_acceleration = 0.5
+    max_angular_acceleration = 0.5
+
+    delta_twist = twist - prev_twist
+
+    delta_twist.vx = np.clip(delta_twist.vx, -max_acceleration * dt, max_acceleration * dt)
+    delta_twist.vy = np.clip(delta_twist.vy, -max_acceleration * dt, max_acceleration * dt)
+    delta_twist.w = np.clip(delta_twist.w, -max_angular_acceleration * dt, max_angular_acceleration * dt)
+    
+    prev_twist = prev_twist + delta_twist
+
+    return prev_twist
 
 def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeeds, ModuleAngles]:
 
     transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     twist = transform.log()
     twist = Twist2dVelocity(twist.dx / dt, twist.dy / dt, twist.dyaw / dt)
+    twist = apply_acceleration_limit(twist, dt) 
 
     twist = np.array([twist.vx, twist.vy, twist.w])
     
@@ -138,3 +156,10 @@ if __name__ == "__main__":
 
 def epsilon_equals(a: float, b: float, epsilon: float) -> bool:
     return abs(a - b) < epsilon
+
+
+if __name__ == "__main__":
+    # test acceleration limit 
+    twist = Twist2dVelocity(2.0, 0.0, 0.0)
+    twist = apply_acceleration_limit(twist, 0.10)
+    print(twist.vx, twist.vy, twist.w)

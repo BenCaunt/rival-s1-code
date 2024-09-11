@@ -95,7 +95,14 @@ class Twist2dVelocity:
 
     def exp(self, dt: float) -> Transform2d:
         return self.to_twist2d(dt).exp()
-
+    
+    def __sub__(self, other: "Twist2dVelocity") -> "Twist2dVelocity":
+        return Twist2dVelocity(self.vx - other.vx, self.vy - other.vy, self.w - other.w)
+    
+    def __add__(self, other: "Twist2dVelocity") -> "Twist2dVelocity":
+        return Twist2dVelocity(self.vx + other.vx, self.vy + other.vy, self.w + other.w)
+    def clone(self) -> "Twist2dVelocity":
+        return Twist2dVelocity(self.vx, self.vy, self.w)
 
 class AccelerationSE2:
     def __init__(self, ax: float, ay: float, a_yaw: float):

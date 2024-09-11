@@ -103,7 +103,7 @@ async def main():
             #     print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
-            wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, -yaw)
+            wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, 0)
             print("Yaw anglwe: ", yaw)
             # print(module_angles.to_list_degrees())
 

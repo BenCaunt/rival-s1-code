@@ -92,6 +92,7 @@ async def main():
             loop_start = time.monotonic()
 
             if loop_start - last_recv > WATCHDOG_TIMEOUT:
+                print(last_recv)
                 print("Watchdog timeout")
                 reference_vx = 0.001
                 reference_vy = 0.0

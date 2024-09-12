@@ -71,7 +71,7 @@ async def main():
         result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids
     }
 
-    is_initial_angle = False
+    is_initial_angle = True
     initial_angle = 0.0
 
 

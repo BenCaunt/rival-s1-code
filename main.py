@@ -158,8 +158,8 @@ async def main():
                         * sign
                         * wheel_speed_to_motor_speed(wheel_speeds.from_id(id))
                         * drive_directions[id],
-                        maximum_torque=1.5,
-                        accel_limit=60.0,
+                        maximum_torque=0.95,
+                        accel_limit=1.0 * 0.95,
                         query=True,
                     )
                 )

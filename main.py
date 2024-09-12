@@ -16,7 +16,10 @@ DRIVE_REDUCTION = 17.0 / 54.0
 DRIVE_DIAMETER = 0.075  # 75 mm
 DRIVE_CIRCUMFERENCE = DRIVE_DIAMETER * math.pi
 
+WATCHDOG_TIMEOUT = 0.5
+
 # GLOBAL STATE
+last_recv = time.monotonic()
 reference_vx = 0.0  # m/s
 reference_vy = 0.0  # m/s
 reference_w = 0.0  # rad/s
@@ -54,7 +57,7 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
 
 async def main():
     transport = moteus_pi3hat.Pi3HatRouter(
-        servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7,8]},
+        servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
     )
 
     azimuth_ids = [2, 4, 6, 8]
@@ -74,7 +77,6 @@ async def main():
     is_initial_angle = True
     initial_angle = 0.0
 
-
     yaw = 0.0
 
     measured_module_positions = {2: 0.0, 4: 0.0, 6: 0.0, 8: 0.0}
@@ -88,6 +90,12 @@ async def main():
         while True:
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
+
+            if loop_start - last_recv > WATCHDOG_TIMEOUT:
+                print("Watchdog timeout")
+                reference_vx = 0.001
+                reference_vy = 0.0
+                reference_w = 0.0
 
             # if not command_queue.empty():
             #     command = command_queue.get()
@@ -168,7 +176,6 @@ async def main():
             if is_initial_angle:
                 initial_angle = imu_result.euler_rad.yaw
                 is_initial_angle = False
-
 
             yaw = angle_wrap(imu_result.euler_rad.yaw - initial_angle)
 

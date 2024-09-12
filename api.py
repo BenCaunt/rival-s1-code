@@ -8,6 +8,7 @@
 # ///
 
 import math
+import time
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field
@@ -63,6 +64,7 @@ async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandRespo
     main.reference_vx = new_velocity.vx
     main.reference_vy = new_velocity.vy
     main.reference_w = math.radians(new_velocity.omega)
+    main.last_recv = time.monotonic()
     # command_queue.put(new_velocity)
 
     return RobotCommandResponse(success=True)

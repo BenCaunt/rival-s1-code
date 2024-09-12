@@ -66,8 +66,7 @@ async def main():
 
     # Stop all servos
     results = await transport.cycle([x.make_stop(query=True) for x in servos.values()])
-    print("Azimuth IDs: ", azimuth_ids)
-    print(results)
+    # print(results)
     initial_module_positions = {
         result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids
     }
@@ -104,12 +103,11 @@ async def main():
 
             reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
             wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, -yaw)
-            print(f"Yaw angle (rad): {yaw} | Yaw angle (deg): {math.degrees(yaw)}")
+            # print(f"Yaw angle (rad): {yaw} | Yaw angle (deg): {math.degrees(yaw)}")
             # print(module_angles.to_list_degrees())
 
             commands = []
             for id in azimuth_ids:
-                print(f"Module {id}")
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(
                     initial_module_positions[id]
                 )

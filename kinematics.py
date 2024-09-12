@@ -94,7 +94,7 @@ def twist_to_wheel_speeds(twist: Twist2dVelocity, dt: float) -> Tuple[WheelSpeed
     transform = Transform2d(twist.vx * dt, twist.vy * dt, twist.w * dt)
     twist = transform.log()
     twist = Twist2dVelocity(twist.dx / dt, twist.dy / dt, twist.dyaw / dt)
-    twist = apply_acceleration_limit(twist, dt) 
+    # twist = apply_acceleration_limit(twist, dt) 
 
     twist = np.array([twist.vx, twist.vy, twist.w])
     

@@ -76,8 +76,8 @@ def apply_acceleration_limit(twist: Twist2dVelocity, dt: float) -> Twist2dVeloci
     max_acceleration = 10.0
     max_deceleration = 10.0
 
-    max_angular_acceleration = np.deg2rad(360 * 10)
-    max_angular_deceleration = np.deg2rad(360 * 10)
+    max_angular_acceleration = np.deg2rad(360 * 8)
+    max_angular_deceleration = np.deg2rad(360 * 8)
 
     delta_twist = twist - prev_twist
 

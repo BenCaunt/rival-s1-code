@@ -145,9 +145,9 @@ async def main():
                     servos[id].make_position(
                         position=measured_module_positions[id] + target_position_delta,
                         velocity=0.0,
-                        maximum_torque=1.3,
+                        maximum_torque=0.9,
                         velocity_limit=180.0,
-                        accel_limit=120.0,
+                        accel_limit=60.0,
                         query=True,
                     )
                 )
@@ -165,7 +165,7 @@ async def main():
                         * sign
                         * wheel_speed_to_motor_speed(wheel_speeds.from_id(id))
                         * drive_directions[id],
-                        maximum_torque=1.0 * 0.35,
+                        maximum_torque=1.0 * 0.25,
                         query=True,
                     )
                 )

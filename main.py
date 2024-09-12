@@ -56,6 +56,8 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
 
 
 async def main():
+    global reference_vx, reference_vy, reference_w
+
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
     )
@@ -91,7 +93,6 @@ async def main():
             dt = time.monotonic() - loop_start
             loop_start = time.monotonic()
 
-            print(loop_start - last_recv)
             if loop_start - last_recv > WATCHDOG_TIMEOUT:
                 reference_vx = 0.001
                 reference_vy = 0.0

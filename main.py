@@ -23,7 +23,9 @@ last_recv = time.monotonic()
 reference_vx = 0.0  # m/s
 reference_vy = 0.0  # m/s
 reference_w = 0.0  # rad/s
-
+offset = 0.0 # rad
+is_initial_angle = True
+reference_heading = 0.0
 gain = 0.1
 
 from kinematics import robot_relative_velocity_to_twist, twist_to_wheel_speeds, WheelSpeeds, ModuleAngles
@@ -56,7 +58,7 @@ def calculate_target_position_delta(reference_azimuth_angle, estimated_angle):
 
 
 async def main():
-    global reference_vx, reference_vy, reference_w
+    global reference_vx, reference_vy, reference_w, offset, is_initial_angle, reference_heading
 
     transport = moteus_pi3hat.Pi3HatRouter(
         servo_bus_map={1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8]},
@@ -76,8 +78,7 @@ async def main():
         result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids
     }
 
-    is_initial_angle = True
-    initial_angle = 0.0
+    offset = 0.0
 
     yaw = 0.0
 
@@ -109,12 +110,17 @@ async def main():
             #     command_queue.task_done()
 
             #     print(f"reference_vx: {reference_vx}, reference_vy: {reference_vy}, reference_w: {reference_w}")
-
-            reference = Twist2dVelocity(reference_vx, reference_vy, reference_w)
-            wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, -yaw)
+            reference_heading = reference_heading + reference_w * dt
+            heading_error = angle_wrap(reference_heading - -yaw)
+            heading_gain = 0.0
+            if np.abs(reference_w) > 0.1:
+                reference_heading = -yaw
+                heading_gain = 0.0
+            reference = Twist2dVelocity(reference_vx, reference_vy, reference_w + heading_error * heading_gain)
+            wheel_speeds, module_angles = robot_relative_velocity_to_twist(reference, dt, -yaw) # here for 'yaw'
             # print(f"Yaw angle (rad): {yaw} | Yaw angle (deg): {math.degrees(yaw)}")
             # print(module_angles.to_list_degrees())
-
+            print(f"heading error {heading_error}")
             commands = []
             for id in azimuth_ids:
                 current_angle = calculate_swerve_angle(measured_module_positions[id]) - calculate_swerve_angle(
@@ -145,7 +151,7 @@ async def main():
                     servos[id].make_position(
                         position=measured_module_positions[id] + target_position_delta,
                         velocity=0.0,
-                        maximum_torque=0.9,
+                        maximum_torque=1.7,
                         velocity_limit=180.0,
                         accel_limit=60.0,
                         query=True,
@@ -175,10 +181,11 @@ async def main():
             imu_result = [x for x in results if x.id == -1 and isinstance(x, moteus_pi3hat.CanAttitudeWrapper)][0]
 
             if is_initial_angle:
-                initial_angle = imu_result.euler_rad.yaw
+                offset = imu_result.euler_rad.yaw
+
                 is_initial_angle = False
 
-            yaw = angle_wrap(imu_result.euler_rad.yaw - initial_angle)
+            yaw = angle_wrap(imu_result.euler_rad.yaw - offset)
 
             measured_module_positions = {
                 result.id: result.values[moteus.Register.POSITION] for result in results if result.id in azimuth_ids

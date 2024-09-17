@@ -50,7 +50,6 @@ class FieldRelativeVelocity(BaseModel):
     vy: float = Field(..., description="Velocity in the y direction. Units: m/s")
     omega: float = Field(..., description="Angular velocity. Units: rad/s")
 
-
 class RobotCommandResponse(BaseModel):
     """Response to a robot command"""
 
@@ -69,5 +68,10 @@ async def set_velocity(new_velocity: FieldRelativeVelocity) -> RobotCommandRespo
 
     return RobotCommandResponse(success=True)
 
+@app.post("/zero-heading", tags=["robot_control"])
+async def zero_heading() -> RobotCommandResponse:
+    main.is_initial_angle = True
+
+    return RobotCommandResponse(success=True)
 
 uvicorn.run(app, host="0.0.0.0", port=8000)
